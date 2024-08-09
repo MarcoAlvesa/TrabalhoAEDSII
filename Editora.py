@@ -1,10 +1,11 @@
 import GeradorDocumentos
 
 class Editora:
-    def __init__(self, nome, endereco):
+    def __init__(self, id, nome, pais, cnpj):
+        self.id = id
         self.nome = nome
-        self.endereco = endereco
-        self.cnpj = GeradorDocumentos.GeradorCNPJ().get_cnpj()  # Gera o CNPJ
+        self.pais = pais
+        self.cnpj = cnpj
 
     def getcnpj(self):
         return self.cnpj
