@@ -4,5 +4,5 @@ class Autor:
         self.nome = nome
         self.datanasc = datanasc
 
-    def toString(self):
+    def __str__(self):
         return f"Autor: [{self.id}] Nome: {self.nome}, Data de nascimento: {self.datanasc}"

@@ -4,5 +4,6 @@ class Editora:
         self.nome = nome
         self.pais = pais
         self.cnpj = cnpj
-    def toString(self):
+
+    def __str__(self):
         return f"Editora: [{self.id}] Nome: {self.nome}, Pais: {self.pais}, CNPJ: {self.cnpj}"

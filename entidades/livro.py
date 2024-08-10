@@ -6,5 +6,5 @@ class Livro:
         self.editora = editora
         self.anoPubli = anoPubli
 
-    def toString(self):
+    def __str__(self):
         return f"Livro: [{self.id}] Titulo: {self.titulo}, Autor: {self.autor.nome}, Editora: {self.editora.nome}, Ano: {self.anoPubli} "
