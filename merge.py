@@ -39,3 +39,4 @@ class merge:
 
     def sort(self):
         self.merge_sort(self.lista)
+
