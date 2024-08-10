@@ -7,4 +7,4 @@ class Livro:
         self.anoPubli = anoPubli
 
     def toString(self):
-        return f"Livro: [{self.id}] Titulo: {self.titulo}, Autor: {self.autor.nome}, Editora: {self.editora.nome}, Ano "
+        return f"Livro: [{self.id}] Titulo: {self.titulo}, Autor: {self.autor.nome}, Editora: {self.editora.nome}, Ano: {self.anoPubli} "
