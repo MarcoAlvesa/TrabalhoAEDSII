@@ -1,7 +1,7 @@
 class Livro:
-    def __init__(self, id, titulo, autor, genero, anoPubli):
+    def __init__(self, id, titulo, autor, editora, anoPubli):
         self.id = id
         self.titulo = titulo
         self.autor = autor
-        self.genero = genero
+        self.editora = editora
         self.anoPubli = anoPubli

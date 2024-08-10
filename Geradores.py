@@ -6,7 +6,7 @@ from faker import Faker
 
 class Geradores:
     def __init__(self):
-        self.cnpj = self.generate_cnpj()
+        self.fake = Faker()
 
     def calculate_special_digit(self, lst):
         digit = sum(v * ((i % 8) + 2) for i, v in enumerate(lst))
@@ -19,35 +19,32 @@ class Geradores:
             cnpj.insert(0, self.calculate_special_digit(cnpj))
         return '{}{}.{}{}{}.{}{}{}-{}{}'.format(*cnpj)
 
-    def get_cnpj(self):
-        return self.cnpj
-    
-    def gerar_autor(quantidade):
-        Autor = []
+    def gerar_autor(self, quantidade):
+        autores = []
         for i in range(quantidade):
             id = i + 1
-            nome = fake.name()
-            datanasc = fake.date_of_birth(minimum_age=20, maximum_age=90)
-            Autor.append(Autor(id, nome, datanasc))
-        return Autor
+            nome = self.fake.name()
+            datanasc = self.fake.date_of_birth(minimum_age=20, maximum_age=90)
+            autores.append(Autor(id, nome, datanasc))
+        return autores
 
-    def gerar_editora(quantidade):
-        editora = []
+    def gerar_editora(self, quantidade):
+        editoras = []
         for i in range(quantidade):
             id = i + 1
-            nome = fake.company()
-            pais = fake.country()
-            cnpj = generate_cnpj()
-            editora.append(Editora(id, nome, pais, cnpj))
-        return editora
+            nome = self.fake.company()
+            pais = self.fake.country()
+            cnpj = self.generate_cnpj()
+            editoras.append(Editora(id, nome, pais, cnpj))
+        return editoras
 
-    def gerar_livros(quantidade, Autor, editora):
+    def gerar_livros(self, quantidade, autores, editoras):
         livros = []
         for i in range(quantidade):
             id = i + 1
-            titulo = fake.sentence(nb_word=4)
-            autor = random.choice(Autor)
-            editora = random.choice(editora)
+            titulo = self.fake.sentence(nb_words=4)
+            autor = random.choice(autores)
+            editora = random.choice(editoras)
             anoPubli = random.randint(1900, 2024)
             livros.append(Livro(id, titulo, autor, editora, anoPubli))
         return livros
