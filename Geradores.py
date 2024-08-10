@@ -26,6 +26,7 @@ class Geradores:
             nome = self.fake.name()
             datanasc = self.fake.date_of_birth(minimum_age=20, maximum_age=90)
             autores.append(Autor(id, nome, datanasc))
+        random.shuffle(autores)
         return autores
 
     def gerar_editora(self, quantidade):
@@ -36,6 +37,7 @@ class Geradores:
             pais = self.fake.country()
             cnpj = self.generate_cnpj()
             editoras.append(Editora(id, nome, pais, cnpj))
+        random.shuffle(editoras)
         return editoras
 
     def gerar_livros(self, quantidade, autores, editoras):
@@ -47,4 +49,5 @@ class Geradores:
             editora = random.choice(editoras)
             anoPubli = random.randint(1900, 2024)
             livros.append(Livro(id, titulo, autor, editora, anoPubli))
+        random.shuffle(livros)
         return livros
