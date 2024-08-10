@@ -5,3 +5,6 @@ class Livro:
         self.autor = autor
         self.editora = editora
         self.anoPubli = anoPubli
+
+    def toString(self):
+        return f"Livro: [{self.id}] Titulo: {self.titulo}, Autor: {self.autor.nome}, Editora: {self.editora.nome}, Ano "

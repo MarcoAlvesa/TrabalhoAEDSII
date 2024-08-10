@@ -4,3 +4,5 @@ class Editora:
         self.nome = nome
         self.pais = pais
         self.cnpj = cnpj
+    def toString(self):
+        return f"Editora: [{self.id}] Nome: {self.nome}, Pais: {self.pais}, CNPJ: {self.cnpj}"
