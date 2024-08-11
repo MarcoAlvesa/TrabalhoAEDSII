@@ -1,4 +1,4 @@
-class merge:
+class Merge:
     def __init__(self, lista, key=lambda x: x):
         self.lista = lista
         self.key = key

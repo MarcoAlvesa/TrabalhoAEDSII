@@ -1,4 +1,4 @@
-class escreveArquivotxt:
+class EscreveArquivotxt:
     def __init__(self, nomearq):
         self.nomearq = nomearq
         with open(nomearq, 'w') as arquivo:
