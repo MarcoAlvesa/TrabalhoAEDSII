@@ -1,23 +1,25 @@
 import math
 
+
 class Pesquisas:
+
     @staticmethod
     def pesquisa_binaria(lista, id):
         baixo = 0
         alto = len(lista) - 1
-        bigO = math.log(len(lista))
+        bigO = math.log2(len(lista))
         count = 0
         while baixo <= alto:
             count += 1
             meio = (baixo + alto) // 2
             chute = lista[meio].id
             if chute == id:
-                return meio, print(f"Execuções vs Big O: {count} vs O({bigO})")
+                return meio, count, bigO
             if chute > id:
                 alto = meio - 1
             else:
                 baixo = meio + 1
-        return -1
+        return -1, count, bigO
 
     @staticmethod
     def pesquisa_sequencial(lista, id):
@@ -33,4 +35,4 @@ class Pesquisas:
             else:
                 pos = pos + 1
 
-        return pos, print(f"Execuções vs Big O: {count} vs O({bigO})") if found else None
+        return pos if found else -1, count, bigO
