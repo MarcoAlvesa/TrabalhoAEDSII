@@ -3,6 +3,7 @@ from autor import Autor
 from livro import Livro
 from editora import Editora
 from faker import Faker
+import pickle
 
 class Geradores:
     def __init__(self):
@@ -19,28 +20,45 @@ class Geradores:
             cnpj.insert(0, self.calculate_special_digit(cnpj))
         return '{}{}.{}{}{}.{}{}{}-{}{}'.format(*cnpj)
 
-    def gerar_autor(self, quantidade):
+    def gerar_autor(self, quantidade, arquivo_txt='autores_random.txt', arquivo_bin='autores_random.bin'):
         autores = []
         for i in range(quantidade):
             id = i + 1
             nome = self.fake.name()
             datanasc = self.fake.date_of_birth(minimum_age=20, maximum_age=90)
-            autores.append(Autor(id, nome, datanasc))
+            autores.append(f"ID: {id}, Nome: {nome}, Data de Nascimento: {datanasc}")
+
         random.shuffle(autores)
+
+        with open(self.arquivo_txt, 'w') as arquivo_txt:
+            for autor in autores:
+                arquivo_txt.write(autor + '\n')
+        with open(self.arquivo_bin, 'wd') as arquivo_bin:
+            pickle.dump(autores, arquivo_bin)
+
+        print(f"Arquivo de texto'{self.arquivo_txt}' e arquivo binário '{self.arquivo_bin}' criado com sucesso.")
         return autores
 
-    def gerar_editora(self, quantidade):
+    def gerar_editora(self, quantidade, arquivo_txt='editora_random.txt', arquivo_bin='editora_random.bin'):
         editoras = []
         for i in range(quantidade):
             id = i + 1
             nome = self.fake.company()
             pais = self.fake.country()
             cnpj = self.generate_cnpj()
-            editoras.append(Editora(id, nome, pais, cnpj))
+            editoras.append(f"ID: {id}, Nome: {nome}, Pais: {pais}, CNPJ: {cnpj}")
         random.shuffle(editoras)
+        
+        with open(self.arquivo_txt, 'w') as arquivo_txt:
+            for editora in editoras:
+                arquivo_txt.write(editora + '\n')
+        with open(self.arquivo_bin, 'wd') as arquivo_bin:
+            pickle.dump(editoras, arquivo_bin)
+
+        print(f"Arquivo de texto'{self.arquivo_txt}' e arquivo binário '{self.arquivo_bin}' criado com sucesso.")
         return editoras
 
-    def gerar_livros(self, quantidade, autores, editoras):
+    def gerar_livros(self, quantidade, autores, editoras, arquivo_txt= 'livros_random.txt', arquivo_bin = 'livros_random.bin'):
         livros = []
         for i in range(quantidade):
             id = i + 1
@@ -48,6 +66,14 @@ class Geradores:
             autor = random.choice(autores)
             editora = random.choice(editoras)
             anoPubli = random.randint(1900, 2024)
-            livros.append(Livro(id, titulo, autor, editora, anoPubli))
+            livros.append(f"ID: {id}, Titulo: {titulo}, Autor: {autor.nome}, Editora: {editora.nome}, Ano de Publicação: {anoPubli}")
         random.shuffle(livros)
+        with open(self.arquivo_txt, 'w') as arquivo_txt:
+            for livro in livros:
+                arquivo_txt.write(livro + '\n')
+
+        with open(self.arquivo_bin, 'wd') as arquivo_bin:
+            pickle.dump(livros, arquivo_bin)
+        
+        print(f"Arquivo de texto'{self.arquivo_txt}' e arquivo binário '{self.arquivo_bin}' criado com sucesso.")
         return livros
