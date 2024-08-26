@@ -16,6 +16,7 @@ class Autor:
         self.caminho_txt = os.path.join("Bases_dat", "Pesquisas.txt")
 
     def gerador(self, tamanho):
+        t_inicial = time.time()
         os.makedirs("Bases_dat", exist_ok=True)
         with open(self.caminhocompleto, 'wb') as arquivo_binario:
             for i in range(tamanho):
@@ -30,15 +31,34 @@ class Autor:
                 arquivo_binario.write(idbinario)
                 arquivo_binario.write(nome_binario.ljust(50, b'\x00'))
                 arquivo_binario.write(datanasc_binario.ljust(10, b'\x00'))
-        print(f'{50 * "-"}')
-        print(f'Base de autores  gerada com sucesso! Tam----> [{tamanho}]')
+        t_final = time.time()
+        print(f'Base: [autores] gerada com sucesso! Tamanho -> [{tamanho}]')
+        print(f'Tempo: {t_final - t_inicial:.2f}s ')
         self.embaralhar_base()
         print(f'{50 * "-"}')
 
+    def printBase(self):
+        if not os.path.exists(self.caminhocompleto):
+            print(f'Base: "{self.caminhocompleto}" não encontrada para exibir informações!')
+            return
+        with open(self.caminhocompleto, 'rb') as arquivo_binario:
+            while True:
+                id_binario = arquivo_binario.read(4)
+                if not id_binario:
+                    break
+
+                id = struct.unpack('i', id_binario)[0]
+                nome_binario = arquivo_binario.read(50).rstrip(b'\x00')  # 50 bytes para o nome
+                nome = nome_binario.decode('utf-8')
+                datanasc_binario = arquivo_binario.read(10).rstrip(b'\x00')  # 10 bytes para a data de nascimento
+                datanasc = datanasc_binario.decode('utf-8')
+
+                print(f"Autor: [{id}] Nome: {nome}, Data de Nascimento: {datanasc}")
+        print(f'{50 * "-"}')
     def pesquisa_binaria(self, id_procurado):
         temp_Inicial = time.time()
         if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para pesquisa binária!!')
+            print(f'Pesquisa binária: Base "{self.caminhocompleto}" não encontrada para pesquisa binária!!')
             return
 
         tamanho_registro = 4 + 50 + 10
@@ -68,14 +88,13 @@ class Autor:
                     datanasc = datanasc_binario.decode('utf-8')
 
                     print(f'\n{20 * "="}Pesquisa binária concluida{20 * "="} ')
-                    with open(self.caminho_txt, 'w', encoding='utf-8') as arquivo_txt:
-                        arquivo_txt.write(f"Autor: [{id_meio}] Nome: {nome}, Data de nascimento: {datanasc}\n")
+                    with open(self.caminho_txt, 'a', encoding='utf-8') as arquivo_txt:
+                        arquivo_txt.write('Pesquisa binária base [Autor]:\n')
+                        arquivo_txt.write(f"Autor: {id_meio}\nNome: {nome}\nData de nascimento: {datanasc}\n{50*'='}\n")
 
-                    print(f"Autor [{id_meio}] gravado no arquivo '{self.caminho_txt}' com sucesso!")
-                    print(f'Big0(pior caso): {math.ceil(big_o)}')
-                    print(f'Execuções: {count}')
+                    print(f"Autor [{id_meio}] gravado no arquivo: '{self.caminho_txt}' com sucesso!")
+                    print(f'Big0(pior caso): {math.ceil(big_o)} | Execuções: {count}')
                     print(f'Tempo decorrido na pesquisa: {(temp_Final - temp_Inicial)}s')
-                    print(f'{60 * "-"}')
                     return
 
                 if id_meio > id_procurado:
@@ -83,15 +102,14 @@ class Autor:
                 else:
                     baixo = meio + 1
 
-        print('Autor não Existe!')
-        with open(self.caminho_txt, 'w', encoding='utf-8') as arquivo_txt:
-            arquivo_txt.write('Autor não existe')
+        print('Pesquisa binária: Autor não existe!')
+        with open(self.caminho_txt, 'a', encoding='utf-8') as arquivo_txt:
+            arquivo_txt.write('Pesquisa binária: Autor não existe')
         return
-
     def pesquisa_sequencial(self, id_procurado):
         temp_Inicial = time.time()
         if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para pesquisa sequêncial!!')
+            print(f'Pesquisa sequencial: Base "{self.caminhocompleto}" não encontrada para pesquisa sequêncial!!')
             return
 
         tamanho_registro = 4 + 50 + 10
@@ -117,41 +135,22 @@ class Autor:
                 if id_registro == id_procurado:
                     temp_Final = time.time()
                     print(f'\n{20 * "="}Pesquisa sequencial concluida{20 * "="} ')
-                    with open(self.caminho_txt, 'w', encoding='utf-8') as arquivo_txt:
-                        arquivo_txt.write(f"Autor: [{id_registro}] Nome: {nome}, Data de nascimento: {datanasc}\n")
+                    with open(self.caminho_txt, 'a', encoding='utf-8') as arquivo_txt:
+                        arquivo_txt.write('Pesquisa sequencial base [Autor]: \n')
+                        arquivo_txt.write(f"Autor: {id_registro}\nNome: {nome}\nData de nascimento: {datanasc}\n{50*'='}\n")
 
-                        print(f"Autor [{id_registro}] gravado no arquivo '{self.caminho_txt}' com sucesso!")
-                        print(f'Big0(pior caso): {num_registros}')
-                        print(f'Execuções: {count}')
+                        print(f"Autor [{id_registro}] gravado no arquivo: '{self.caminho_txt}' com sucesso!")
+                        print(f'Big0(pior caso): {math.ceil(num_registros)} | Execuções: {count}')
                         print(f'Tempo decorrido na pesquisa: {(temp_Final - temp_Inicial)}s')
                         print(f'{60 * "-"}')
                         return
 
-            print('Autor não encontrado!')
-            with open(self.caminho_txt, 'w', encoding='utf-8') as arquivo_txt:
-                arquivo_txt.write('Autor não encontrado')
-
-    def printBase(self):
-        if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para exibir informações!')
-            return
-        with open(self.caminhocompleto, 'rb') as arquivo_binario:
-            while True:
-                id_binario = arquivo_binario.read(4)
-                if not id_binario:
-                    break
-
-                id = struct.unpack('i', id_binario)[0]
-                nome_binario = arquivo_binario.read(50).rstrip(b'\x00')  # 50 bytes para o nome
-                nome = nome_binario.decode('utf-8')
-                datanasc_binario = arquivo_binario.read(10).rstrip(b'\x00')  # 10 bytes para a data de nascimento
-                datanasc = datanasc_binario.decode('utf-8')
-
-                print(f"ID: {id}, Nome: {nome}, Data de Nascimento: {datanasc}")
-
+            print('Pesquisa sequencial: Autor não encontrado!')
+            with open(self.caminho_txt, 'a', encoding='utf-8') as arquivo_txt:
+                arquivo_txt.write('Pesquisa sequencial: Autor não encontrado')
     def embaralhar_base(self):
         if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para embaralhamento!')
+            print(f'Base: "{self.caminhocompleto}" não encontrada para embaralhamento!')
             return
 
         tamanho_nome = 50
@@ -184,13 +183,12 @@ class Autor:
                     temp_file.write(registro)
 
         os.rename(temp_file_path, self.caminhocompleto)
-        print(f'Base de Autores embaralhada com sucesso!')
+        print(f'Base: [autores] embaralhada com sucesso!')
         os.remove(backup_file_path)
-
     def bubble_sort_base(self):
         temp_Inicial = time.time()
         if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para ordenação!')
+            print(f'Base: "{self.caminhocompleto}" não encontrada para ordenação!')
             return
 
         tamanho_nome = 50
@@ -235,9 +233,9 @@ class Autor:
                 if not trocou:
                     break
         temp_Final = time.time()
-        print(f'{20*"="}Base de Autores ordenada com sucesso usando Bubble Sort{20*"="}')
+        print(f'{60 * "-"}')
+        print(f'Base: [autores] ordenada com sucesso usando Bubble Sort.\n')
         print(f'Numero de comparações: {comparacoes}')
         print(f'Numero de trocas: {trocas}')
         print(f'Tempo decorrido na pesquisa: {(temp_Final - temp_Inicial)}s')
-        print(f'{60 * "-"}')
         return

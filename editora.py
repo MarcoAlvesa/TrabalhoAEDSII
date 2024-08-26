@@ -17,6 +17,7 @@ class Editora:
         self.caminho_txt = os.path.join("Bases_dat", "Pesquisas.txt")
 
     def gerador(self, tamanho):
+        t_inicial = time.time()
         os.makedirs("Bases_dat", exist_ok=True)
         with open(self.caminhocompleto, 'wb') as arquivo_binario:
             for i in range(tamanho):
@@ -31,21 +32,42 @@ class Editora:
                 contato_binario = self.contato.encode('utf-8')
 
                 arquivo_binario.write(idbinario)
-                arquivo_binario.write(nome_binario.ljust(100, b'\x00'))
-                arquivo_binario.write(pais_binario.ljust(100, b'\x00'))
-                arquivo_binario.write(contato_binario.ljust(100, b'\x00'))
-        print(f'{50 * "-"}')
-        print(f'Base de editoras  gerada com sucesso! Tam----> [{tamanho}]')
+                arquivo_binario.write(nome_binario.ljust(150, b'\x00'))
+                arquivo_binario.write(pais_binario.ljust(150, b'\x00'))
+                arquivo_binario.write(contato_binario.ljust(30, b'\x00'))
+        t_final = time.time()
+        print(f'Base: [editoras] gerada com sucesso! Tam -> [{tamanho}]')
+        print(f'Tempo: {t_final - t_inicial:.2f}s ')
         self.embaralhar_base()
         print(f'{50 * "-"}')
+    def printBase(self):
+        if not os.path.exists(self.caminhocompleto):
+            print(f'Base: "{self.caminhocompleto}" não encontrada para exibir informações!')
+            return
 
+        with open(self.caminhocompleto, 'rb') as arquivo_binario:
+            while True:
+                id_binario = arquivo_binario.read(4)
+                if not id_binario:
+                    break
+
+                id = struct.unpack('i', id_binario)[0]
+                nome_binario = arquivo_binario.read(150).rstrip(b'\x00')  # 50 bytes para o nome
+                nome = nome_binario.decode('utf-8')
+                pais_binario = arquivo_binario.read(150).rstrip(b'\x00')  # 50 bytes para o país
+                pais = pais_binario.decode('utf-8')
+                contato_binario = arquivo_binario.read(30).rstrip(b'\x00')  # 50 bytes para o contato
+                contato = contato_binario.decode('utf-8')
+
+                print(f"Editora: [{id}] Nome: {nome}, País: {pais}, Contato: {contato}")
+        print(f'{50 * "-"}')
     def pesquisa_binaria(self, id_procurado):
         temp_Inicial = time.time()
         if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para pesquisa binária!!')
+            print(f'Pesquisa binária: Base "{self.caminhocompleto}" não encontrada para pesquisa binária!!')
             return
 
-        tamanho_registro = 4 + 100 + 100 + 100
+        tamanho_registro = 4 + 150 + 150 + 30
 
         with open(self.caminhocompleto, 'rb') as arquivo_binario:
             arquivo_binario.seek(0, os.SEEK_END)
@@ -66,19 +88,19 @@ class Editora:
                 id_meio = struct.unpack('i', id_binario)[0]
                 if id_meio == id_procurado:
                     temp_Final = time.time()
-                    nome_binario = arquivo_binario.read(100).rstrip(b'\x00')
+                    nome_binario = arquivo_binario.read(150).rstrip(b'\x00')
                     nome = nome_binario.decode('utf-8')
-                    pais_binario = arquivo_binario.read(100).rstrip(b'\x00')
+                    pais_binario = arquivo_binario.read(150).rstrip(b'\x00')
                     pais = pais_binario.decode('utf-8')
-                    contato_binario = arquivo_binario.read(100).rstrip(b'\x00')
+                    contato_binario = arquivo_binario.read(30).rstrip(b'\x00')
                     contato = contato_binario.decode('utf-8')
                     print(f'\n{20 * "="}Pesquisa binária concluida{20 * "="} ')
-                    with open(self.caminho_txt, 'w', encoding='utf-8') as arquivo_txt:
-                        arquivo_txt.write(f"Editora: [{id_meio}] Nome: {nome}, Pais: {pais}, Contato: {contato}\n")
+                    with open(self.caminho_txt, 'a', encoding='utf-8') as arquivo_txt:
+                        arquivo_txt.write('Pesquisa binária base [Editora]:\n')
+                        arquivo_txt.write(f"Editora: {id_meio}\nNome: {nome}\nPais: {pais}\nContato: {contato}\n{50*'='}\n")
 
-                    print(f"Editora [{id_meio}] gravada no arquivo '{self.caminho_txt}' com sucesso!")
-                    print(f'Big0(pior caso): {math.ceil(big_o)}')
-                    print(f'Execuções: {count}')
+                    print(f"Editora [{id_meio}] gravada no arquivo: '{self.caminho_txt}' com sucesso!")
+                    print(f'Big0(pior caso): {math.ceil(big_o)} | Execuções: {count}')
                     print(f'Tempo decorrido na pesquisa: {(temp_Final - temp_Inicial)}s')
                     print(f'{60 * "-"}')
                     return
@@ -88,18 +110,17 @@ class Editora:
                 else:
                     baixo = meio + 1
 
-            print('Editora não Existe!')
-            with open(self.caminho_txt, 'w', encoding='utf-8') as arquivo_txt:
-                arquivo_txt.write('Editora não existe')
+            print('Pesquisa binária: Editora não existe!')
+            with open(self.caminho_txt, 'a', encoding='utf-8') as arquivo_txt:
+                arquivo_txt.write('Pesquisa binária: Editora não existe')
             return
-
     def pesquisa_sequencial(self, id_procurado):
         temp_Inicial = time.time()
         if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para pesquisa sequêncial!!')
+            print(f'Pesquisa sequencial: Base "{self.caminhocompleto}" não encontrada para pesquisa sequêncial!!')
             return
 
-        tamanho_registro = 4 + 50 + 50 + 50
+        tamanho_registro = 4 + 150 + 150 + 30
         count = 0
 
         with open(self.caminhocompleto, 'rb') as arquivo_binario:
@@ -113,60 +134,38 @@ class Editora:
                 if not id_binario:
                     break
                 id_registro = struct.unpack('i', id_binario)[0]
-                nome_binario = arquivo_binario.read(100).rstrip(b'\x00')
+                nome_binario = arquivo_binario.read(150).rstrip(b'\x00')
                 nome = nome_binario.decode('utf-8')
-                pais_binario = arquivo_binario.read(100).rstrip(b'\x00')
+                pais_binario = arquivo_binario.read(150).rstrip(b'\x00')
                 pais = pais_binario.decode('utf-8')
-                contato_binario = arquivo_binario.read(100).rstrip(b'\x00')
+                contato_binario = arquivo_binario.read(30).rstrip(b'\x00')
                 contato = contato_binario.decode('utf-8')
                 count += 1
 
                 if id_registro == id_procurado:
                     temp_Final = time.time()
                     print(f'\n{20 * "="}Pesquisa sequencial concluida{20 * "="} ')
-                    with open(self.caminho_txt, 'w', encoding='utf-8') as arquivo_txt:
-                        arquivo_txt.write(f"Autor: [{id_registro}] Nome: {nome}, Pais: {pais}, Contato: {contato}\n")
+                    with open(self.caminho_txt, 'a', encoding='utf-8') as arquivo_txt:
+                        arquivo_txt.write('Pesquisa sequencial base [Editora]: \n')
+                        arquivo_txt.write(f"Editora: {id_registro}\nNome: {nome}\nPais: {pais}\nContato: {contato}\n{50*'='}\n")
 
-                        print(f"Editora [{id_registro}] gravada no arquivo '{self.caminho_txt}' com sucesso!")
-                        print(f'Big0(pior caso): {num_registros}')
-                        print(f'Execuções: {count}')
+                        print(f"Editora [{id_registro}] gravada no arquivo: '{self.caminho_txt}' com sucesso!")
+                        print(f'Big0(pior caso): {math.ceil(num_registros)} | Execuções: {count}')
                         print(f'Tempo decorrido na pesquisa: {(temp_Final - temp_Inicial)}s')
                         print(f'{60 * "-"}')
                         return
 
-            print('Editora não encontrada!')
-            with open(self.caminho_txt, 'w', encoding='utf-8') as arquivo_txt:
-                arquivo_txt.write('Editora não encontrada!')
-
-    def printBase(self):
-        if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para exibir informações!')
-            return
-
-        with open(self.caminhocompleto, 'rb') as arquivo_binario:
-            while True:
-                id_binario = arquivo_binario.read(4)
-                if not id_binario:
-                    break
-
-                id = struct.unpack('i', id_binario)[0]
-                nome_binario = arquivo_binario.read(100).rstrip(b'\x00')  # 50 bytes para o nome
-                nome = nome_binario.decode('utf-8')
-                pais_binario = arquivo_binario.read(100).rstrip(b'\x00')  # 20 bytes para o país
-                pais = pais_binario.decode('utf-8')
-                contato_binario = arquivo_binario.read(100).rstrip(b'\x00')  # 20 bytes para o contato
-                contato = contato_binario.decode('utf-8')
-
-                print(f"ID: {id}, Nome: {nome}, País: {pais}, Contato: {contato}")
-
+            print('Pesquisa sequencial: Editora não encontrada!')
+            with open(self.caminho_txt, 'a', encoding='utf-8') as arquivo_txt:
+                arquivo_txt.write('Pesquisa sequencial: Editora não encontrada!')
     def embaralhar_base(self):
         if not os.path.exists(self.caminhocompleto):
-            print(f'Base "{self.caminhocompleto}" não encontrada para embaralhamento!')
+            print(f'Base: "{self.caminhocompleto}" não encontrada para embaralhamento!')
             return
 
-        tamanho_nome = 100
-        tamanho_pais = 100
-        tamanho_contato = 100
+        tamanho_nome = 150
+        tamanho_pais = 150
+        tamanho_contato = 30
         tamanho_registro = 4 + tamanho_nome + tamanho_pais + tamanho_contato
 
         temp_file_path = self.caminhocompleto + ".shuffled"
@@ -195,18 +194,17 @@ class Editora:
                     temp_file.write(registro)
 
         os.rename(temp_file_path, self.caminhocompleto)
-        print(f'Base de editoras embaralhada com sucesso!')
+        print(f'Base: [editoras] embaralhada com sucesso!')
         os.remove(backup_file_path)
-
     def bubble_sort_base(self):
         temp_Inicial = time.time()
         if not os.path.exists(self.caminhocompleto):
             print(f'Base "{self.caminhocompleto}" não encontrada para ordenação!')
             return
 
-        tamanho_nome = 100
-        tamanho_pais = 100
-        tamanho_contato = 100
+        tamanho_nome = 150
+        tamanho_pais = 150
+        tamanho_contato = 30
         tamanho_registro = 4 + tamanho_nome + tamanho_pais + tamanho_contato
         comparacoes = 0
         trocas = 0
@@ -247,9 +245,10 @@ class Editora:
                 if not trocou:
                     break
         temp_Final = time.time()
-        print('Base de editoras ordenada com sucesso usando Bubble Sort!')
+        print(f'{60 * "-"}')
+        print('Base: [editoras] ordenada com sucesso usando Bubble Sort.\n')
         print(f'Numero de comparações: {comparacoes}')
         print(f'Numero de trocas: {trocas}')
         print(f'Tempo decorrido na pesquisa: {(temp_Final - temp_Inicial)}s')
-        print(f'{60 * "-"}')
+
         return
